@@ -34,12 +34,12 @@ class ToggleButton extends Component {
 		};
 
 		// Set custom query in store
-		updateCustomQuery(props.componentId, props, currentValue);
-		const hasMounted = false;
+		// updateCustomQuery(props.componentId, props, currentValue);
+		// const hasMounted = false;
 
-		if (currentValue.length) {
-			this.handleToggle(currentValue, true, props, hasMounted);
-		}
+		// if ((currentValue.length && !props.group) || (currentValue.length && props.group && props.group !== props.selectedValue)) {
+		// 	this.handleToggle(currentValue, true, props, hasMounted);
+		// }
 	}
 
 	componentDidMount() {
@@ -199,12 +199,12 @@ class ToggleButton extends Component {
 		if (customQuery) {
 			({ query } = customQuery(value, props) || {});
 			customQueryOptions = getOptionsFromQuery(customQuery(value, props));
-			updateCustomQuery(props.componentId, props, value);
+			updateCustomQuery(props.group || props.componentId, props, value);
 		}
 
-		props.setQueryOptions(props.componentId, customQueryOptions);
+		props.setQueryOptions(props.group || props.componentId, customQueryOptions);
 		props.updateQuery({
-			componentId: props.componentId,
+			componentId: props.group || props.componentId,
 			query,
 			value: filterValue, // sets a string in URL not array
 			label: props.filterLabel,
@@ -259,7 +259,8 @@ class ToggleButton extends Component {
 							primary={isSelected}
 							large
 						>
-							{item.label}
+							{item.label},
+							{this.props.children}
 						</Button>
 					);
 				})}
@@ -295,6 +296,7 @@ ToggleButton.propTypes = {
 	URLParams: types.bool,
 	index: types.string,
 	enableStrictSelection: types.bool,
+	group: types.string
 };
 
 ToggleButton.defaultProps = {
@@ -304,6 +306,7 @@ ToggleButton.defaultProps = {
 	style: {},
 	URLParams: false,
 	enableStrictSelection: false,
+	group: null
 };
 
 // Add componentType for SSR
@@ -311,7 +314,9 @@ ToggleButton.componentType = componentTypes.toggleButton;
 
 const mapStateToProps = (state, props) => ({
 	selectedValue:
-		(state.selectedValues[props.componentId]
+		(state.selectedValues[props.group]
+			&& state.selectedValues[props.group].value)
+		|| (state.selectedValues[props.componentId]
 			&& state.selectedValues[props.componentId].value)
 		|| null,
 	enableAppbase: state.config.enableAppbase,

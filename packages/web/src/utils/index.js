@@ -70,7 +70,7 @@ export const isIdentical = (a, b) => {
 	return false;
 };
 export const getValidPropsKeys = (props = {}) =>
-	Object.keys(props).filter(i => validProps.includes(i));
+	Object.keys(props).filter(i => validProps.includes(i || 'group'));
 /**
  * Handles the caret position for input components
  * @param {HTMLInputElement} e
